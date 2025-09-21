@@ -84,6 +84,8 @@ export { default as Extension } from "./lib/Extension";
 
 export const theme = lightTheme;
 
+type Done = { done: boolean };
+
 export type Props = {
   id?: string;
   value?: string;
@@ -137,7 +139,7 @@ export type Props = {
   uploadImage?: (file: File) => Promise<string>;
   onBlur?: () => void;
   onFocus?: () => void;
-  onSave?: ({ done: boolean }) => void;
+  onSave?: (prop: Done) => void;
   onCancel?: () => void;
   onChange?: (value: () => string) => void;
   onImageUploadStart?: () => void;
@@ -185,7 +187,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     },
     embeds: [],
     extensions: [],
-    tooltip: Tooltip,
+    tooltip: Tooltip
   };
 
   state = {
@@ -195,7 +197,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     blockMenuOpen: false,
     linkMenuOpen: false,
     blockMenuSearch: "",
-    emojiMenuOpen: false,
+    emojiMenuOpen: false
   };
 
   isBlurred: boolean;
@@ -244,7 +246,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     if (prevProps.readOnly !== this.props.readOnly) {
       this.view.update({
         ...this.view.props,
-        editable: () => !this.props.readOnly,
+        editable: () => !this.props.readOnly
       });
     }
 
@@ -297,6 +299,8 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     this.plugins = this.createPlugins();
     this.rulePlugins = this.createRulePlugins();
     this.keymaps = this.createKeymaps();
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     this.serializer = this.createSerializer();
     this.parser = this.createParser();
     this.pasteParser = this.createPasteParser();
@@ -319,11 +323,11 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
           new Blockquote(),
           new CodeBlock({
             dictionary,
-            onShowToast: this.props.onShowToast,
+            onShowToast: this.props.onShowToast
           }),
           new CodeFence({
             dictionary,
-            onShowToast: this.props.onShowToast,
+            onShowToast: this.props.onShowToast
           }),
           new Emoji(),
           new Text(),
@@ -333,12 +337,12 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
           new Embed({ embeds: this.props.embeds }),
           new ListItem(),
           new Notice({
-            dictionary,
+            dictionary
           }),
           new Heading({
             dictionary,
             onShowToast: this.props.onShowToast,
-            offset: this.props.headingsOffset,
+            offset: this.props.headingsOffset
           }),
           new HorizontalRule(),
           new Image({
@@ -346,15 +350,15 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
             uploadImage: this.props.uploadImage,
             onImageUploadStart: this.props.onImageUploadStart,
             onImageUploadStop: this.props.onImageUploadStop,
-            onShowToast: this.props.onShowToast,
+            onShowToast: this.props.onShowToast
           }),
           new Table(),
           new TableCell({
             onSelectTable: this.handleSelectTable,
-            onSelectRow: this.handleSelectRow,
+            onSelectRow: this.handleSelectRow
           }),
           new TableHeadCell({
-            onSelectColumn: this.handleSelectColumn,
+            onSelectColumn: this.handleSelectColumn
           }),
           new TableRow(),
           new Bold(),
@@ -367,7 +371,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
             onKeyboardShortcut: this.handleOpenLinkMenu,
             onClickLink: this.props.onClickLink,
             onClickHashtag: this.props.onClickHashtag,
-            onHoverLink: this.props.onHoverLink,
+            onHoverLink: this.props.onHoverLink
           }),
           new Strikethrough(),
           new OrderedList(),
@@ -381,12 +385,12 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
             onFocus: this.handleEditorFocus,
             onSave: this.handleSave,
             onSaveAndExit: this.handleSaveAndExit,
-            onCancel: this.props.onCancel,
+            onCancel: this.props.onCancel
           }),
           new BlockMenuTrigger({
             dictionary,
             onOpen: this.handleOpenBlockMenu,
-            onClose: this.handleCloseBlockMenu,
+            onClose: this.handleCloseBlockMenu
           }),
           new EmojiTrigger({
             onOpen: (search: string) => {
@@ -394,14 +398,14 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
             },
             onClose: () => {
               this.setState({ emojiMenuOpen: false });
-            },
+            }
           }),
           new Placeholder({
-            placeholder: this.props.placeholder,
+            placeholder: this.props.placeholder
           }),
           new MaxLength({
-            maxLength: this.props.maxLength,
-          }),
+            maxLength: this.props.maxLength
+          })
         ].filter(extension => {
           // Optionaly disable extensions
           if (this.props.disableExtensions) {
@@ -411,7 +415,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
           }
           return true;
         }),
-        ...(this.props.extensions || []),
+        ...(this.props.extensions || [])
       ],
       this
     );
@@ -427,13 +431,13 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
 
   createKeymaps() {
     return this.extensions.keymaps({
-      schema: this.schema,
+      schema: this.schema
     });
   }
 
   createInputRules() {
     return this.extensions.inputRules({
-      schema: this.schema,
+      schema: this.schema
     });
   }
 
@@ -448,13 +452,13 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
             node,
             view,
             getPos,
-            decorations,
+            decorations
           });
         };
 
         return {
           ...nodeViews,
-          [extension.name]: nodeView,
+          [extension.name]: nodeView
         };
       }, {});
   }
@@ -462,7 +466,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   createCommands() {
     return this.extensions.commands({
       schema: this.schema,
-      view: this.view,
+      view: this.view
     });
   }
 
@@ -477,7 +481,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   createSchema() {
     return new Schema({
       nodes: this.nodes,
-      marks: this.marks,
+      marks: this.marks
     });
   }
 
@@ -488,7 +492,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   createParser() {
     return this.extensions.parser({
       schema: this.schema,
-      plugins: this.rulePlugins,
+      plugins: this.rulePlugins
     });
   }
 
@@ -496,7 +500,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     return this.extensions.parser({
       schema: this.schema,
       rules: { linkify: true },
-      plugins: this.rulePlugins,
+      plugins: this.rulePlugins
     });
   }
 
@@ -512,10 +516,10 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
         dropCursor({ color: this.theme().cursor }),
         gapCursor(),
         inputRules({
-          rules: this.inputRules,
+          rules: this.inputRules
         }),
-        keymap(baseKeymap),
-      ],
+        keymap(baseKeymap)
+      ]
     });
   }
 
@@ -567,7 +571,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
         // Because Prosemirror and React are not linked we must tell React that
         // a render is needed whenever the Prosemirror state changes.
         self.forceUpdate();
-      },
+      }
     });
 
     // Tell third-party libraries and screen-readers that this is an input
@@ -712,7 +716,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
         headings.push({
           title: node.textContent,
           level: node.attrs.level,
-          id,
+          id
         });
       }
     });
@@ -737,7 +741,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
       style,
       tooltip,
       className,
-      onKeyDown,
+      onKeyDown
     } = this.props;
     const { isRTL } = this.state;
     const dictionary = this.dictionary(this.props.dictionary);

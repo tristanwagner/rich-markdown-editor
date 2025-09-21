@@ -22,6 +22,8 @@ export default class ComponentView {
   node: Node;
   view: EditorView;
   getPos: () => number;
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   decorations: Decoration<{ [key: string]: any }>[];
   isSelected = false;
   dom: HTMLElement | null;
@@ -54,7 +56,7 @@ export default class ComponentView {
       node: this.node,
       isSelected: this.isSelected,
       isEditable: this.view.editable,
-      getPos: this.getPos,
+      getPos: this.getPos
     });
 
     ReactDOM.render(
